@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "name": "AVR",
+            "intelliSenseMode": "${default}",
+            "cStandard": "c11",
+            "cppStandard": "c++14",
+            "compilerPath": "C:\\Program Files (x86)\\Arduino\\hardware\\tools\\avr\\bin\\avr-gcc.exe",
+            "includePath": [],
+            "compilerArgs": [
+                "-mmcu=atmega328",
+                "-DF_CPU=8000000UL"
+            ]
+        }
+    ],
+    "version": 4
+}

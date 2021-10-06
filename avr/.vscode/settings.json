@@ -1,0 +1,23 @@
+{
+    "AVR.source.compiler": "C:\\Program Files (x86)\\Arduino\\hardware\\tools\\avr\\bin\\avr-gcc.exe",
+    "AVR.programmer.tool": "C:\\Program Files (x86)\\Arduino\\hardware\\tools\\avr\\bin\\avrdude.exe",
+    "AVR.programmer.definitions": "C:\\Program Files (x86)\\Arduino\\hardware\\tools\\avr\\etc\\avrdude.conf",
+    "AVR.source.libraries": [],
+    "AVR.device.type": "atmega328",
+    "AVR.device.frequency": 8000000,
+    "files.associations": {
+        "stepper.h": "c",
+        "main.h": "c",
+        "pd.h": "c",
+        "delay.h": "c",
+        "uart.h": "c",
+        "io.h": "c",
+        "string.h": "c",
+        "math.h": "c",
+        "stdbool.h": "c",
+        "mpu6050_rgw.h": "c",
+        "wire_rgw.h": "c",
+        "twi.h": "c",
+        "transceiver.h": "c"
+    }
+}
