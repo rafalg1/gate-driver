@@ -611,30 +611,3 @@ bool overcurrentDetected(struct gate * gatePtr)
 
   return ret;
 }
-
-// bool overcurrentDetected(struct gate * gatePtr)
-// {
-//   int cnt = 0;
-//   bool ret = false;
-
-//   for (uint8_t i = 0; i < CURRENT_BUFF_SIZE; i++)
-//   {
-//     if(gatePtr->currentBuff[i] > gatePtr->currentThreshold) cnt++;
-//   }
-  
-//   if(cnt >= OVERCURRENT_NUM) ret = true;
-
-//   return ret;
-// }
-
-
-
-
-
-// void adcTask(void)
-// {
-//   // shunt resistor: 0,05 ohm
-//   // gain 3
-//   // 1A -> 0,15V
-//   // 1024 ADC -> 5V 
-//   // 1000/3/1024*ADC = [A*10]
