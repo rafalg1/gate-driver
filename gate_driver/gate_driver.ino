@@ -17,11 +17,11 @@ volatile uint16_t task_10ms = 10;
 
 uint8_t overloadTab[OVERLOAD_TAB_ENTRIES][3] =
 {
-  {135, 2, 3},
-  {130, 4, 5},
-  {120, 8, 10},
-  {110, 18, 20},
-  {90, 38, 40}
+  {125, 2, 3},
+  {120, 4, 5},
+  {110, 8, 10},
+  {100, 18, 20},
+  {95, 38, 40}
 };
 // uint8_t overloadTab[OVERLOAD_TAB_ENTRIES][3] =
 // {
@@ -279,10 +279,10 @@ void driverLogic(void)
       {
         if(DRIVER_POS_BOTH_CLOSED == gateDriver.pos)
         {
+          prepareDriverForRun();
           gateDriver.runMode = DRIVER_RUN_MODE_BOTH;
           gateDriver.isRunningG1 = true;
           gateDriver.isRunningG2 = true;
-          prepareDriverForRun();
           Serial.println("Driver: start opening both");
           gateDriver.dir = DRIVER_DIR_OPENING;
           gateDriver.pos = DRIVER_POS_BOTH_OPEN;
@@ -291,10 +291,10 @@ void driverLogic(void)
         }
         else if(DRIVER_POS_BOTH_OPEN == gateDriver.pos)
         {
+          prepareDriverForRun();
           gateDriver.runMode = DRIVER_RUN_MODE_BOTH;
           gateDriver.isRunningG1 = true;
           gateDriver.isRunningG2 = true;
-          prepareDriverForRun();
           Serial.println("Driver: start closing both");
           gateDriver.dir = DRIVER_DIR_CLOSING;
           gateDriver.pos = DRIVER_POS_BOTH_CLOSED;
@@ -318,25 +318,25 @@ void driverLogic(void)
         if(DRIVER_POS_BOTH_CLOSED == gateDriver.pos)
         {
           // open one gate
+          prepareDriverForRun();
           gateDriver.state = DRIVER_STATE_RUN;
           gateDriver.runMode = DRIVER_RUN_MODE_ONE;
           gateDriver.isRunningG1 = true;
           gateDriver.pos = DRIVER_POS_ONE_OPEN;
           gate1.state = INIT;
           gate1.dir = DIR_OPEN;
-          prepareDriverForRun();
           Serial.println("Driver: start opening one");
         }
         else if(DRIVER_POS_ONE_OPEN == gateDriver.pos)
         {
           // close one gate
+          prepareDriverForRun();
           gateDriver.state = DRIVER_STATE_RUN;
           gateDriver.runMode = DRIVER_RUN_MODE_ONE;
           gateDriver.isRunningG1 = true;
           gateDriver.pos = DRIVER_POS_BOTH_CLOSED;
           gate1.state = INIT;
           gate1.dir = DIR_CLOSE;
-          prepareDriverForRun();
           Serial.println("Driver: start closing one");
         }
 
