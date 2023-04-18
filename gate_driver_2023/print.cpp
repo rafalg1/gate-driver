@@ -63,6 +63,8 @@ void runSummaryPrint(void)
     Serial.println(GATE_STATE_T_STR[gate1.state]);
     Serial.print("pos: ");
     Serial.println(GATE_POS_T_STR[gate1.pos]);
+    Serial.print("pos2: ");
+    Serial.println(getPositionInRev(gate1.position));
 
     Serial.println("------------");
     Serial.println("Gate2");
@@ -75,6 +77,8 @@ void runSummaryPrint(void)
     Serial.println(GATE_STATE_T_STR[gate2.state]);
     Serial.print("pos: ");
     Serial.println(GATE_POS_T_STR[gate2.pos]);
+    Serial.print("pos2: ");
+    Serial.println(getPositionInRev(gate2.position));
 
     Serial.println("************************************");
 }

@@ -154,23 +154,37 @@ void loop()
         gateLogic(&gate1);
         // gateLogic(&gate2);
 
-        // if(gateDriver.isRunning == true)
+        static int cntPrint = 0;
+
+        if(gateDriver.isRunning == true)
         {
             Serial.print("i1: ");
             Serial.print(gate1.current);
-            Serial.print("  i2: ");
-            Serial.println(gate2.current);
+            Serial.print(" i2: ");
+            Serial.print(gate2.current);
+            cntPrint++;
+            if(5 == cntPrint)
+            {
+                cntPrint = 0;
+                Serial.print(" p1: ");
+                Serial.print(getPositionInRev(gate1.position));
+                Serial.print(" p2: ");
+                Serial.print(getPositionInRev(gate2.position));
+                Serial.print(" u: ");
+                Serial.print(gateDriver.batteryVoltage);
+            }
+            Serial.println("");
         }
     }
 
     if(!task_200ms)
     {
-        Serial.print("pos1: ");
-        Serial.print(getPositionInRev(gate1.position));
-        Serial.print("  pos2: ");
-        Serial.print(getPositionInRev(gate2.position));
-        Serial.print("u: ");
-        Serial.println(gateDriver.batteryVoltage);
+        // Serial.print(" p1: ");
+        // Serial.print(getPositionInRev(gate1.position));
+        // Serial.print(" p2: ");
+        // Serial.print(getPositionInRev(gate2.position));
+        // Serial.print(" u: ");
+        // Serial.println(gateDriver.batteryVoltage);
 
         // static uint16_t curr = 0;
         // Serial.print("i: ");
