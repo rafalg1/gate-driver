@@ -59,8 +59,8 @@ void runSummaryPrint(void)
     Serial.println(gate1.lastRunTime);
     Serial.print("max current: ");
     Serial.println(gate1.maxCurrent);
-    Serial.print("state: ");
-    Serial.println(GATE_STATE_T_STR[gate1.state]);
+    // Serial.print("state: ");
+    // Serial.println(GATE_STATE_T_STR[gate1.state]);
     Serial.print("pos: ");
     Serial.println(GATE_POS_T_STR[gate1.pos]);
     Serial.print("pos2: ");
@@ -73,8 +73,8 @@ void runSummaryPrint(void)
     Serial.println(gate2.lastRunTime);
     Serial.print("max current: ");
     Serial.println(gate2.maxCurrent);
-    Serial.print("state: ");
-    Serial.println(GATE_STATE_T_STR[gate2.state]);
+    // Serial.print("state: ");
+    // Serial.println(GATE_STATE_T_STR[gate2.state]);
     Serial.print("pos: ");
     Serial.println(GATE_POS_T_STR[gate2.pos]);
     Serial.print("pos2: ");

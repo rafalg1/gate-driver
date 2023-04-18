@@ -26,11 +26,19 @@ volatile uint16_t task_10ms = 10;
 
 uint8_t overloadTab[OVERLOAD_TAB_ENTRIES][3] =
     {
-        {100, 2, 3},
-        {60, 4, 5},
-        {55, 8, 10},
-        {50, 18, 20},
-        {45, 38, 40}};
+        {50, 2, 3},
+        {35, 4, 5},
+        {30, 8, 10},
+        {28, 18, 20},
+        {25, 38, 40}};
+
+// uint8_t overloadTab[OVERLOAD_TAB_ENTRIES][3] =
+//     {
+//         {100, 2, 3},
+//         {60, 4, 5},
+//         {55, 8, 10},
+//         {50, 18, 20},
+//         {45, 38, 40}};
 
 void gateInit(struct gate* gatePtr)
 {
@@ -493,12 +501,14 @@ void gateLogic(struct gate* gatePtr)
     {
         gateDriver.canAcceptCommand = false;
         gatePtr->state = DELAY_FOR_RELAY_2;
+
     }
     else if(DELAY_FOR_RELAY_2 == gatePtr->state)
     {
         if(DIR_OPEN == gatePtr->dir) setRelay(gatePtr, HIGH);
         else setRelay(gatePtr, LOW);
         gatePtr->state = DELAY_FOR_RELAY_3;
+        gatePtr->cnt = 20;
     }
     else if(DELAY_FOR_RELAY_3 == gatePtr->state)
     {
@@ -569,7 +579,7 @@ void gateCurrentControll(struct gate* gatePtr)
         if(gatePtr->current > gatePtr->maxCurrent)
             gatePtr->maxCurrent = gatePtr->current;
 
-        if(gatePtr->runTime > 500)
+        if(gatePtr->runTime > 400)
         {
             gatePtr->currentBuff[gatePtr->ptr] = gatePtr->current;
             gatePtr->ptr++;
