@@ -216,13 +216,13 @@ void setRelay(struct gate *gatePtr, uint8_t level)
 {
     if(&gate1 == gatePtr)
     {
-        if(HIGH == level) REL_1_HI;
-        else REL_1_LO;
+        if(HIGH == level) REL_1_ON;
+        else REL_1_OFF;
     }
     else if(&gate2 == gatePtr)
     {
-        if(HIGH == level) REL_2_HI;
-        else REL_2_LO;
+        if(HIGH == level) REL_2_ON;
+        else REL_2_OFF;
     }
 }
 

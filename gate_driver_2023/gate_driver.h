@@ -59,7 +59,7 @@
 #define RUN_TIME_MAX (28 * 1000)
 #define SLOW_DOWN_TIME (19 * 1000)
 #define THREAD_PITCH (5)                  // 5mm skok gwintu
-#define MAX_DISTANCE (45 * THREAD_PITCH)  // w obrotach
+#define MAX_DISTANCE (45 * THREAD_PITCH * 100)  // w obrotach
 
 #define AVG_RUN_TIME (26 * 1000)
 
