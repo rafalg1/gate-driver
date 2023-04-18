@@ -526,7 +526,7 @@ void gateLogic(struct gate* gatePtr)
         if(0 < gatePtr->cnt) gatePtr->cnt--;
         else
         {
-            setPwm(gatePtr, 100);
+            setPwm(gatePtr, 0);
             gatePtr->state = END;
         }
     }
