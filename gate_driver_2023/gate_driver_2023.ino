@@ -183,10 +183,10 @@ void loop()
                 Serial.print(getPositionInRev(gate1.position));
                 Serial.print(" p2: ");
                 Serial.print(getPositionInRev(gate2.position));
-                // Serial.print(" d1: ");
-                // Serial.print(getPositionInRev(gate1.position));
-                // Serial.print(" d2: ");
-                // Serial.print(getPositionInRev(gate2.position));
+                Serial.print(" d1: ");
+                Serial.print(getPositionInRev(gate1.distance));
+                Serial.print(" d2: ");
+                Serial.print(getPositionInRev(gate2.distance));
                 Serial.print(" u: ");
                 Serial.print(gateDriver.batteryVoltage);
             }
@@ -266,6 +266,7 @@ void prepareDriverForRun(void)
     gateDriver.isRunning = true;
     gateInit(&gate1);
     gateInit(&gate2);
+    checkPositionBeforeStart();
     REL_MAIN_HI;
 }
 
@@ -317,7 +318,7 @@ void driverLogic(void)
             //  jeśli są obie zamknięte to otwiera jedną
             if(DRIVER_STATE_IDLE == gateDriver.state)
             {
-                checkPositionBeforeStart();
+
                 if(DRIVER_POS_BOTH_CLOSED == gateDriver.pos)
                 {
                     // open one gate
@@ -345,7 +346,6 @@ void driverLogic(void)
             }
             else if(DRIVER_RUN_MODE_ONE == gateDriver.runMode)
             {
-                // stopFromCmd();
                 stopGate(&gate1, STOP_TYPE_CMD);
             }
         }
@@ -371,6 +371,7 @@ void driverLogic(void)
     }
     else if(DRIVER_STATE_END == gateDriver.state)
     {
+        checkPositionAfterStop();
         runSummaryPrint();
         gateDriver.canAcceptCommand = true;
         gateDriver.state = DRIVER_STATE_IDLE;
@@ -439,15 +440,7 @@ void gateLogic(struct gate* gatePtr)
     }
     else if(DELAY_FOR_RELAY == gatePtr->state)
     {
-        // if(gatePtr->cnt > 0) gatePtr->cnt--;
-        // else
-        // {
-        //     gatePtr->pwm = 100;
-        //     gatePtr->state = RUN_2;
-        // }
-        // gatePtr->pwm = 100;
         setPwm(gatePtr, 100);
-        // Serial.println("DEL");
         gatePtr->state = RUN_2;
     }
     // else if(INRUSH_1 == gatePtr->state)
@@ -570,44 +563,39 @@ void gateLogic(struct gate* gatePtr)
     }
 }
 
-// prąd wyłączenie zależy od trybu przy starcie jest dużo większy
 void gateCurrentControl(struct gate* gatePtr)
 {
-    // if(true == gatePtr->adcComplete)
+    if(gatePtr->current > gatePtr->maxCurrent)
+        gatePtr->maxCurrent = gatePtr->current;
+
+    if((true == gatePtr->currentMonitorEnableInrush) && (true == gatePtr->currentMonitorEnableOvercurrent))
     {
-        // gatePtr->adcComplete = false;
+        gatePtr->currentBuff[gatePtr->ptr] = gatePtr->current;
+        gatePtr->ptr++;
+        if(gatePtr->ptr >= CURRENT_BUFF_SIZE) gatePtr->ptr = 0;
 
-        if(gatePtr->current > gatePtr->maxCurrent)
-            gatePtr->maxCurrent = gatePtr->current;
-
-        // if(gatePtr->runTime > 400)
-        if((true == gatePtr->currentMonitorEnableInrush) && (true == gatePtr->currentMonitorEnableOvercurrent))
+        if(true == overcurrentDetected(gatePtr))
         {
-            gatePtr->currentBuff[gatePtr->ptr] = gatePtr->current;
-            gatePtr->ptr++;
-            if(gatePtr->ptr >= CURRENT_BUFF_SIZE) gatePtr->ptr = 0;
-
-            // if(gatePtr->currentControl)
-            {
-                if(true == overcurrentDetected(gatePtr))
-                {
-                    // nie działa
-                    setPwm(gatePtr, 0);
-                    gateDriver.canAcceptCommand = false;
-                    gatePtr->currentMonitorEnableOvercurrent = false;
-                    // gatePtr->isRunning = false;
-                    gatePtr->state = OVERCURRENT_DETECTED;
-                    if(gatePtr == &gate1) Serial.println("gate1: overcurrent");
-                    if(gatePtr == &gate2) Serial.println("gate2: overcurrent");
-                }
-            }
+            // nie działa
+            setPwm(gatePtr, 0);
+            gateDriver.canAcceptCommand = false;
+            gatePtr->currentMonitorEnableOvercurrent = false;
+            // gatePtr->isRunning = false;
+            gatePtr->state = OVERCURRENT_DETECTED;
+            if(gatePtr == &gate1) Serial.println("gate1: overcurrent");
+            if(gatePtr == &gate2) Serial.println("gate2: overcurrent");
         }
-        else
-        {
-        }
-
-        // jeśli silnik jedzie i ma włączoną flage obserwacji prądu
     }
+    else
+    {
+    }
+}
+
+uint8_t currentThresholdCalculate(uint8_t current, uint8_t pwm)
+{
+    uint16_t tmp = current;
+    tmp = tmp*pwm/200 + current/2;
+    return (uint8_t)
 }
 
 bool overcurrentDetected(struct gate* gatePtr)
@@ -631,6 +619,8 @@ bool overcurrentDetected(struct gate* gatePtr)
             actIndex = lastIndex;
             aboveCnt = 0;
             currThreshold = overloadTab[i][0];
+            currThreshold = currentThresholdCalculate(currThreshold, gatePtr->pwm)
+
             mVal = overloadTab[i][1];
             nVal = overloadTab[i][2];
 

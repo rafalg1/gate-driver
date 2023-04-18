@@ -199,6 +199,7 @@ struct gate
     uint16_t lastRunTime;
     uint16_t cnt;
     uint8_t pwm;
+    uint8_t relayState;
     uint16_t runTime;
     uint16_t slowDownTime;
     uint16_t currentThreshold;

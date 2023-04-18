@@ -82,7 +82,7 @@ void calculatePosition(void)
         Serial.println(periodDistance);
 
         gate1.distance += periodDistance;
-        if(DIR_OPEN == gate1.dir) gate1.position += periodDistance;
+        if(DIR_OPEN == gate1.relayState) gate1.position += periodDistance;
         else gate1.position -= periodDistance;
     }
 
@@ -91,7 +91,7 @@ void calculatePosition(void)
         periodDistance = getMap2D(currentTab_100, speedTab_100, gate2.current) / 20;  // 50ms
 
         gate2.distance += periodDistance;
-        if(DIR_OPEN == gate2.dir) gate2.position += periodDistance;
+        if(DIR_OPEN == gate2.relayState) gate2.position += periodDistance;
         else gate2.position -= periodDistance;
     }
 }
@@ -129,12 +129,14 @@ void setPwm(int gatePtr, uint8_t val)
 
     if(&gate1 == gatePtr)
     {
+        gate1.pwm = val;
         pwmG1req = sol;
         if(0 == pwmG1req) pwmG1 = 0, GATE1_HI, gate1.motorInRun = false;
         else gate1.motorInRun = true;
     }
     if(&gate2 == gatePtr)
     {
+        gate2.pwm = val;
         pwmG2req = sol;
         if(0 == pwmG2req) pwmG2 = 0, GATE2_HI, gate2.motorInRun = false;
         else gate2.motorInRun = true;
@@ -223,13 +225,13 @@ void setRelay(struct gate *gatePtr, uint8_t level)
 {
     if(&gate1 == gatePtr)
     {
-        if(HIGH == level) REL_1_ON;
-        else REL_1_OFF;
+        if(HIGH == level) REL_1_ON, gate1.relayState = DIR_CLOSE;
+        else REL_1_OFF, gate1.relayState = DIR_CLOSE;
     }
     else if(&gate2 == gatePtr)
     {
-        if(HIGH == level) REL_2_ON;
-        else REL_2_OFF;
+        if(HIGH == level) REL_2_ON, gate2.relayState = DIR_CLOSE;
+        else REL_2_OFF, gate2.relayState = DIR_CLOSE;
     }
 }
 
