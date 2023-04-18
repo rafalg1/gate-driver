@@ -112,6 +112,11 @@ void checkPositionBeforeStart(void)
 
     if(DIR_OPEN == gate2.dir && gate2.position < POSITION_FAST_RIDE_OPEN) gate2.fastRideAllowed = true;
     if(DIR_CLOSE == gate2.dir && gate2.position > POSITION_FAST_RIDE_CLOSE) gate2.fastRideAllowed = true;
+
+    Serial.print("fast ride 1: ");
+    Serial.print(gate1.fastRideAllowed);
+    Serial.print(" fast ride 2: ");
+    Serial.println(gate1.fastRideAllowed);
 }
 
 void setPwm(int gatePtr, uint8_t val)

@@ -305,6 +305,7 @@ void driverLogic(void)
             //  jeśli są obie zamknięte to otwiera jedną
             if(DRIVER_STATE_IDLE == gateDriver.state)
             {
+                checkPositionBeforeStart();
                 if(DRIVER_POS_BOTH_CLOSED == gateDriver.pos)
                 {
                     // open one gate
@@ -422,7 +423,8 @@ void gateLogic(struct gate* gatePtr)
         if(DIR_CLOSE == gatePtr->dir) setRelay(gatePtr, HIGH);
         // gatePtr->cnt = 4;
         gatePtr->state = DELAY_FOR_RELAY;
-        Serial.println("INIT");
+        // Serial.println("INIT");
+
     }
     else if(DELAY_FOR_RELAY == gatePtr->state)
     {
@@ -434,7 +436,7 @@ void gateLogic(struct gate* gatePtr)
         // }
         // gatePtr->pwm = 100;
         setPwm(gatePtr, 100);
-        Serial.println("DEL");
+        // Serial.println("DEL");
         gatePtr->state = RUN_2;
     }
     // else if(INRUSH_1 == gatePtr->state)
@@ -453,17 +455,16 @@ void gateLogic(struct gate* gatePtr)
     // }
     else if(RUN_2 == gatePtr->state)
     {
-        // if((DIR_OPEN == gatePtr->dir) && (gatePtr->position > POSITION_SLOW_OPEN))
-        // {
-        //     setPwm(gatePtr, LOW_SPEED_PWM);
-        //     gatePtr->state = LOW_SPEED;
-        // }
-        // if((DIR_CLOSE == gatePtr->dir) && (gatePtr->position < POSITION_SLOW_CLOSE))
-        // {
-        //     setPwm(gatePtr, LOW_SPEED_PWM);
-        //     gatePtr->state = LOW_SPEED;
-        // }
-        Serial.println("RUN");
+        if((DIR_OPEN == gatePtr->dir) && (gatePtr->position > POSITION_SLOW_OPEN))
+        {
+            setPwm(gatePtr, LOW_SPEED_PWM);
+            gatePtr->state = LOW_SPEED;
+        }
+        if((DIR_CLOSE == gatePtr->dir) && (gatePtr->position < POSITION_SLOW_CLOSE))
+        {
+            setPwm(gatePtr, LOW_SPEED_PWM);
+            gatePtr->state = LOW_SPEED;
+        }
     }
     // else if(SLOW_DOWN == gatePtr->state)
     // {
@@ -490,19 +491,17 @@ void gateLogic(struct gate* gatePtr)
     // }
     else if(OVERCURRENT_DETECTED == gatePtr->state)
     {
-        // nie akceptuje komend o d tego czasu do idle
         gateDriver.canAcceptCommand = false;
-        // chwile poczekać przed zmianą przekaźnika po wyłączeniu tranzystora
-        if(DIR_OPEN == gatePtr->dir) setRelay(gatePtr, HIGH);
-        else setRelay(gatePtr, LOW);
-        gatePtr->cnt = 4;
         gatePtr->state = DELAY_FOR_RELAY_2;
-        Serial.println("OVC");
-        
     }
     else if(DELAY_FOR_RELAY_2 == gatePtr->state)
     {
-      Serial.println("DEL2");
+        if(DIR_OPEN == gatePtr->dir) setRelay(gatePtr, HIGH);
+        else setRelay(gatePtr, LOW);
+        gatePtr->state = DELAY_FOR_RELAY_3;
+    }
+    else if(DELAY_FOR_RELAY_3 == gatePtr->state)
+    {
         if(0 < gatePtr->cnt) gatePtr->cnt--;
         else
         {
@@ -578,21 +577,22 @@ void gateCurrentControll(struct gate* gatePtr)
 
             if(gatePtr->isRunning)
             {
-                if(&gate2 == gatePtr)
-                {
-                    // Serial.print("i1: ");
-                    // Serial.print(gate1.current);
-                    // Serial.print("   i2: ");
-                    // Serial.println(gate2.current);
-                }
+                // if(&gate2 == gatePtr)
+                // {
+                //     // Serial.print("i1: ");
+                //     // Serial.print(gate1.current);
+                //     // Serial.print("   i2: ");
+                //     // Serial.println(gate2.current);
+                // }
 
                 if(true == overcurrentDetected(gatePtr))
                 {
                   //nie działa
                     // gatePtr->pwm = 0;
                     setPwm(gatePtr, 0);
+                    gateDriver.canAcceptCommand = false;
                     gatePtr->isRunning = false;
-                    gatePtr->state = SLOW_TO_ZERO;
+                    gatePtr->state = OVERCURRENT_DETECTED;
                     if(gatePtr == &gate1) Serial.println("gate1: overcurrent");
                     if(gatePtr == &gate2) Serial.println("gate2: overcurrent");
                 }

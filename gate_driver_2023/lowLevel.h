@@ -4,6 +4,7 @@
 #include "gate_driver.h"
 
 void setPwm(int gate, uint8_t val);
+void checkPositionBeforeStart(void);
 void calculatePosition(void);
 KEY_T getKey(void);
 void setRelay(struct gate* gatePtr, uint8_t level);

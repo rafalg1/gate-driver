@@ -128,6 +128,7 @@ typedef enum
     DELAY_FOR_RELAY_2,
     BACK_MOTOR,
     OVERCURRENT_DETECTED,
+    DELAY_FOR_RELAY_3,
     END,
     STOP
 } GATE_STATE_T;
