@@ -45,10 +45,11 @@ void gateInit(struct gate* gatePtr)
     setPwm(gatePtr, 0);
 
     gatePtr->isRunning = false;
+    gatePtr->stopType = STOP_TYPE_NONE;
     gatePtr->distance = 0;
     gatePtr->pwm = 0;
     gatePtr->state = STOP;
-    gatePtr->slowDownTime = SLOW_DOWN_TIME;
+    // gatePtr->slowDownTime = SLOW_DOWN_TIME;
     gatePtr->ptr = 0;
     // gatePtr->currentThreshold = CURRENT_THRESHOLD;
     gatePtr->maxCurrent = 0;
@@ -117,7 +118,7 @@ void loop()
         char incomingByte = Serial.read();
         if('1' == incomingByte) handleCommand(COMMAND_BOTH);
         else if('2' == incomingByte) handleCommand(COMMAND_ONE);
-        else if('8' == incomingByte) handleCommand(COMMAND_ONE);
+        // else if('8' == incomingByte) handleCommand(COMMAND_ONE);
         else if('3' == incomingByte) gateDataPrint(&gate1);
         else if('4' == incomingByte) gateDataPrint(&gate2);
         // else if('5' == incomingByte)
@@ -361,7 +362,6 @@ void driverLogic(void)
     {
         gateDriver.state = DRIVER_STATE_END;
         REL_MAIN_LO;
-        delay(10);
         setRelay(&gate1, LOW);
         setRelay(&gate2, LOW);
         gateDriver.isRunning = false;
@@ -370,13 +370,15 @@ void driverLogic(void)
     else if(DRIVER_STATE_END == gateDriver.state)
     {
         runSummaryPrint();
+        gateDriver.canAcceptCommand = true;
         gateDriver.state = DRIVER_STATE_IDLE;
     }
 
+    // TODO
     if(false == gateDriver.canAcceptCommand)
     {
         gateDriver.timeCommand += 10;
-        if(gateDriver.timeCommand > 4000)
+        if(gateDriver.timeCommand > 2000)
         {
             gateDriver.timeCommand = 0;
             gateDriver.canAcceptCommand = true;
@@ -390,7 +392,6 @@ void driverLogic(void)
         if((false == gateDriver.isRunningG1) &&
            (false == gateDriver.isRunningG2))
         {
-            // stopDriverFromTimeout();
             gateDriver.state = DRIVER_STATE_END_PREPARE;
         }
 
@@ -433,7 +434,6 @@ void gateLogic(struct gate* gatePtr)
         // gatePtr->cnt = 4;
         gatePtr->state = DELAY_FOR_RELAY;
         // Serial.println("INIT");
-
     }
     else if(DELAY_FOR_RELAY == gatePtr->state)
     {
@@ -502,7 +502,6 @@ void gateLogic(struct gate* gatePtr)
     {
         gateDriver.canAcceptCommand = false;
         gatePtr->state = DELAY_FOR_RELAY_2;
-
     }
     else if(DELAY_FOR_RELAY_2 == gatePtr->state)
     {
@@ -546,28 +545,23 @@ void gateLogic(struct gate* gatePtr)
         if(&gate1 == gatePtr) gateDriver.isRunningG1 = false;
         if(&gate2 == gatePtr) gateDriver.isRunningG2 = false;
 
-        gateDriver.canAcceptCommand = true;
-
         gatePtr->state = STOP;
     }
 
     if(true == gatePtr->isRunning)
     {
         gatePtr->runTime += GATE_LOGIC_TASK_PERIOD;
-        if(gatePtr->runTime > RUN_TIME_MAX)
+
+        if(STOP_TYPE_NONE == gatePtr->stopType)
         {
-            // gatePtr->isRunning = false;
-            stopGate(gatePtr, STOP_TYPE_TIME);
-        }
-        if(gatePtr->distance > MAX_DISTANCE)
-        {
-            // gatePtr->isRunning = false;
-            // Serial.println(gatePtr->state);
-            //     char charVal[20];
-            // sprintf(charVal, "%08lX", gatePtr->distance);
-            //   Serial.println(charVal);
-            // Serial.println(gatePtr->state);
-            stopGate(gatePtr, STOP_TYPE_MAX_DISTANCE);
+            if(gatePtr->runTime > RUN_TIME_MAX)
+            {
+                stopGate(gatePtr, STOP_TYPE_TIME);
+            }
+            if(gatePtr->distance > MAX_DISTANCE)
+            {
+                stopGate(gatePtr, STOP_TYPE_MAX_DISTANCE);
+            }
         }
     }
 }
@@ -600,11 +594,11 @@ void gateCurrentControl(struct gate* gatePtr)
 
                 if(true == overcurrentDetected(gatePtr))
                 {
-                  //nie działa
-                    // gatePtr->pwm = 0;
+                    // nie działa
+                    //  gatePtr->pwm = 0;
                     setPwm(gatePtr, 0);
                     gateDriver.canAcceptCommand = false;
-                    gatePtr->isRunning = false;
+                    // gatePtr->isRunning = false;
                     gatePtr->state = OVERCURRENT_DETECTED;
                     if(gatePtr == &gate1) Serial.println("gate1: overcurrent");
                     if(gatePtr == &gate2) Serial.println("gate2: overcurrent");

@@ -210,10 +210,12 @@ struct gate
     volatile bool adcComplete;
     bool isRunning;
     bool motorInRun;
+    // bool overcurrentDetected;
     bool fastRideAllowed;
 
     bool overcurrentFlag;
     bool currentControll;
+    STOP_TYPE_T stopType;
     GATE_STATE_T state;
     GATE_DIR_T dir;
     GATE_POS_T pos;
