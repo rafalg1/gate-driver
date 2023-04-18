@@ -1,0 +1,11 @@
+przejazd silnika:
+szarpnięcie początkowe albo szarpnięcie w przeciwną strone na koniec to jest chyba lepsze
+rozpędzanie się do pełnej prędkości
+zwalnianie po przejechaniu zadanego odcinka 30
+cofanie ok 50 - 100ms
+
+tablica pwm 60, 80, 100 predkość obrotowa prąd
+
+skok śruby 2mm
+dlugość ok 35cm
+35x5 obrotów 175
