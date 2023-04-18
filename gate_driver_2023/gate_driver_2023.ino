@@ -545,6 +545,7 @@ void gateLogic(struct gate* gatePtr)
         if(&gate1 == gatePtr) gateDriver.isRunningG1 = false;
         if(&gate2 == gatePtr) gateDriver.isRunningG2 = false;
 
+        gatePtr->lastRunTime = gatePtr->runTime;
         gatePtr->state = STOP;
     }
 
