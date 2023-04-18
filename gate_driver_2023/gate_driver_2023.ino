@@ -156,10 +156,11 @@ void loop()
         calculatePosition();
 
         // check overcurrent:
-        gateCurrentControll(&gate1);
-        // gateCurrentControll(&gate2);
+        gateCurrentControl(&gate1);
+        gateCurrentControl(&gate2);
 
         driverLogic();
+
         gateLogic(&gate1);
         // gateLogic(&gate2);
 
@@ -545,6 +546,8 @@ void gateLogic(struct gate* gatePtr)
         if(&gate1 == gatePtr) gateDriver.isRunningG1 = false;
         if(&gate2 == gatePtr) gateDriver.isRunningG2 = false;
 
+        gateDriver.canAcceptCommand = true;
+
         gatePtr->state = STOP;
     }
 
@@ -570,7 +573,7 @@ void gateLogic(struct gate* gatePtr)
 }
 
 // prąd wyłączenie zależy od trybu przy starcie jest dużo większy
-void gateCurrentControll(struct gate* gatePtr)
+void gateCurrentControl(struct gate* gatePtr)
 {
     if(true == gatePtr->adcComplete)
     {
