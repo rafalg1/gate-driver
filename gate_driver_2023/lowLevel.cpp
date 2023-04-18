@@ -22,10 +22,10 @@ extern volatile uint16_t task_300ms;
 extern volatile uint16_t task_200ms;
 extern volatile uint16_t task_10ms;
 
-#define TAB_SIZE 7
+#define TAB_SIZE 8
 // 12 15 20
-uint16_t currentTab_100[TAB_SIZE] = {8, 11, 15, 20, 25, 30, 40};
-uint16_t speedTab_100[TAB_SIZE] = {587, 575, 561, 544, 529, 515, 490};
+uint16_t currentTab_100[TAB_SIZE] = {8, 11, 15, 20, 25, 30, 40, 50};
+uint16_t speedTab_100[TAB_SIZE] = {587, 575, 561, 544, 529, 515, 490, 380};
 
 uint16_t getMap2D(uint16_t *argPtr, uint16_t *valuePtr, uint16_t val)
 {

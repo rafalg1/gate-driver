@@ -45,6 +45,8 @@ void gateInit(struct gate* gatePtr)
     setPwm(gatePtr, 0);
 
     gatePtr->isRunning = false;
+    gatePtr->currentMonitorEnableOvercurrent = true;
+    gatePtr->currentMonitorEnableInrush = false;
     gatePtr->stopType = STOP_TYPE_NONE;
     gatePtr->distance = 0;
     gatePtr->pwm = 0;
@@ -552,6 +554,7 @@ void gateLogic(struct gate* gatePtr)
     if(true == gatePtr->isRunning)
     {
         gatePtr->runTime += GATE_LOGIC_TASK_PERIOD;
+        if(gatePtr->runTime > 460) gatePtr->currentMonitorEnableInrush = true;
 
         if(STOP_TYPE_NONE == gatePtr->stopType)
         {
@@ -570,35 +573,28 @@ void gateLogic(struct gate* gatePtr)
 // prąd wyłączenie zależy od trybu przy starcie jest dużo większy
 void gateCurrentControl(struct gate* gatePtr)
 {
-    if(true == gatePtr->adcComplete)
+    // if(true == gatePtr->adcComplete)
     {
-        gatePtr->adcComplete = false;
+        // gatePtr->adcComplete = false;
 
         if(gatePtr->current > gatePtr->maxCurrent)
             gatePtr->maxCurrent = gatePtr->current;
 
-        if(gatePtr->runTime > 400)
+        // if(gatePtr->runTime > 400)
+        if((true == gatePtr->currentMonitorEnableInrush) && (true == gatePtr->currentMonitorEnableOvercurrent))
         {
             gatePtr->currentBuff[gatePtr->ptr] = gatePtr->current;
             gatePtr->ptr++;
             if(gatePtr->ptr >= CURRENT_BUFF_SIZE) gatePtr->ptr = 0;
 
-            if(gatePtr->isRunning)
+            // if(gatePtr->currentControl)
             {
-                // if(&gate2 == gatePtr)
-                // {
-                //     // Serial.print("i1: ");
-                //     // Serial.print(gate1.current);
-                //     // Serial.print("   i2: ");
-                //     // Serial.println(gate2.current);
-                // }
-
                 if(true == overcurrentDetected(gatePtr))
                 {
                     // nie działa
-                    //  gatePtr->pwm = 0;
                     setPwm(gatePtr, 0);
                     gateDriver.canAcceptCommand = false;
+                    gatePtr->currentMonitorEnableOvercurrent = false;
                     // gatePtr->isRunning = false;
                     gatePtr->state = OVERCURRENT_DETECTED;
                     if(gatePtr == &gate1) Serial.println("gate1: overcurrent");
