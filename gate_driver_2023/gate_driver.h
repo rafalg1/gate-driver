@@ -53,7 +53,7 @@
 #define INIT_PWM 35
 #define LEVEL_1_PWM 60
 #define LEVEL_2_PWM 100
-#define LOW_SPEED_PWM 60
+#define LOW_SPEED_PWM 45
 
 #define RUN_1_TIME (2 * 1000)
 #define RUN_TIME_MAX (28 * 1000)

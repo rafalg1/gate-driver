@@ -176,27 +176,39 @@ void loop()
         // gateLogic(&gate2);
 
         static int cntPrint = 0;
+        // static int cntPrint = 1;
+
+#define PRINT_2_DATA
 
         if(gateDriver.isRunning == true)
         {
             Serial.print("i1: ");
             Serial.print(gate1.current);
+#if defined(PRINT_2_DATA)
             Serial.print(" i2: ");
             Serial.print(gate2.current);
+#endif
+            Serial.print("w1: ");
+            Serial.print(gate1.pwm);
+            Serial.print(" u: ");
+            Serial.print(gateDriver.batteryVoltage);
+
             cntPrint++;
-            // if(5 == cntPrint)
+            if(5 == cntPrint)
             {
                 cntPrint = 0;
                 Serial.print(" p1: ");
                 Serial.print(getPositionInRev(gate1.position));
+#if defined(PRINT_2_DATA)
                 Serial.print(" p2: ");
                 Serial.print(getPositionInRev(gate2.position));
+#endif
                 Serial.print(" d1: ");
                 Serial.print(getPositionInRev(gate1.distance));
+#if defined(PRINT_2_DATA)
                 Serial.print(" d2: ");
                 Serial.print(getPositionInRev(gate2.distance));
-                Serial.print(" u: ");
-                Serial.print(gateDriver.batteryVoltage);
+#endif
             }
             Serial.println("");
         }
@@ -601,8 +613,8 @@ void gateCurrentControl(struct gate* gatePtr)
 uint8_t currentThresholdCalculate(uint8_t current, uint8_t pwm)
 {
     uint16_t tmp = current;
-    tmp = tmp*pwm/200 + current/2;
-    return (uint8_t) tmp
+    tmp = tmp * pwm / 200 + current / 2;
+    return (uint8_t)tmp
 }
 
 bool overcurrentDetected(struct gate* gatePtr)
@@ -628,7 +640,7 @@ bool overcurrentDetected(struct gate* gatePtr)
             currThreshold = overloadTab[i][0];
             currThreshold = currentThresholdCalculate(currThreshold, gatePtr->pwm);
 
-                mVal = overloadTab[i][1];
+            mVal = overloadTab[i][1];
             nVal = overloadTab[i][2];
 
             for(uint8_t j = 0; j < nVal; j++)
