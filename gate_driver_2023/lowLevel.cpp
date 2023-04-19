@@ -78,8 +78,8 @@ void calculatePosition(void)
     if(gate1.motorInRun)
     {
         periodDistance = getMap2D(currentTab_100, speedTab_100, gate1.current) / 20;  // 50ms
-        Serial.print("dist: ");
-        Serial.println(periodDistance);
+        // Serial.print("dist: ");
+        // Serial.println(periodDistance);
 
         gate1.distance += periodDistance;
         if(DIR_OPEN == gate1.relayState) gate1.position += periodDistance;

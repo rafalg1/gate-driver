@@ -32,6 +32,14 @@ uint8_t overloadTab[OVERLOAD_TAB_ENTRIES][3] =
         {28, 18, 20},
         {25, 38, 40}};
 
+uint8_t overloadTabInrush[OVERLOAD_TAB_ENTRIES][3] =
+    {
+        {140, 2, 3},
+        {130, 3, 4},
+        {120, 3, 4},
+        {100, 3, 4},
+        {90, 4, 6}};
+
 // uint8_t overloadTab[OVERLOAD_TAB_ENTRIES][3] =
 //     {
 //         {100, 2, 3},
@@ -168,27 +176,39 @@ void loop()
         // gateLogic(&gate2);
 
         static int cntPrint = 0;
+        // static int cntPrint = 1;
+
+#define PRINT_2_DATA
 
         if(gateDriver.isRunning == true)
         {
             Serial.print("i1: ");
             Serial.print(gate1.current);
+#if defined(PRINT_2_DATA)
             Serial.print(" i2: ");
             Serial.print(gate2.current);
+#endif
+            Serial.print("w1: ");
+            Serial.print(gate1.pwm);
+            Serial.print(" u: ");
+            Serial.print(gateDriver.batteryVoltage);
+
             cntPrint++;
-            // if(5 == cntPrint)
+            if(5 == cntPrint)
             {
                 cntPrint = 0;
                 Serial.print(" p1: ");
                 Serial.print(getPositionInRev(gate1.position));
+#if defined(PRINT_2_DATA)
                 Serial.print(" p2: ");
                 Serial.print(getPositionInRev(gate2.position));
+#endif
                 Serial.print(" d1: ");
                 Serial.print(getPositionInRev(gate1.distance));
+#if defined(PRINT_2_DATA)
                 Serial.print(" d2: ");
                 Serial.print(getPositionInRev(gate2.distance));
-                Serial.print(" u: ");
-                Serial.print(gateDriver.batteryVoltage);
+#endif
             }
             Serial.println("");
         }
@@ -318,7 +338,6 @@ void driverLogic(void)
             //  jeśli są obie zamknięte to otwiera jedną
             if(DRIVER_STATE_IDLE == gateDriver.state)
             {
-
                 if(DRIVER_POS_BOTH_CLOSED == gateDriver.pos)
                 {
                     // open one gate
@@ -594,8 +613,8 @@ void gateCurrentControl(struct gate* gatePtr)
 uint8_t currentThresholdCalculate(uint8_t current, uint8_t pwm)
 {
     uint16_t tmp = current;
-    tmp = tmp*pwm/200 + current/2;
-    return (uint8_t) tmp;
+    tmp = tmp * pwm / 200 + current / 2;
+    return (uint8_t)tmp
 }
 
 bool overcurrentDetected(struct gate* gatePtr)
