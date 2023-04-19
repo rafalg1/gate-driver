@@ -595,7 +595,7 @@ uint8_t currentThresholdCalculate(uint8_t current, uint8_t pwm)
 {
     uint16_t tmp = current;
     tmp = tmp*pwm/200 + current/2;
-    return (uint8_t)
+    return (uint8_t) tmp;
 }
 
 bool overcurrentDetected(struct gate* gatePtr)
@@ -619,7 +619,7 @@ bool overcurrentDetected(struct gate* gatePtr)
             actIndex = lastIndex;
             aboveCnt = 0;
             currThreshold = overloadTab[i][0];
-            currThreshold = currentThresholdCalculate(currThreshold, gatePtr->pwm)
+            currThreshold = currentThresholdCalculate(currThreshold, gatePtr->pwm);
 
             mVal = overloadTab[i][1];
             nVal = overloadTab[i][2];
