@@ -32,6 +32,14 @@ uint8_t overloadTab[OVERLOAD_TAB_ENTRIES][3] =
         {28, 18, 20},
         {25, 38, 40}};
 
+uint8_t overloadTabInrush[OVERLOAD_TAB_ENTRIES][3] =
+    {
+        {140, 2, 3},
+        {130, 3, 4},
+        {120, 3, 4},
+        {100, 3, 4},
+        {90, 4, 6}};
+
 // uint8_t overloadTab[OVERLOAD_TAB_ENTRIES][3] =
 //     {
 //         {100, 2, 3},
@@ -318,7 +326,6 @@ void driverLogic(void)
             //  jeśli są obie zamknięte to otwiera jedną
             if(DRIVER_STATE_IDLE == gateDriver.state)
             {
-
                 if(DRIVER_POS_BOTH_CLOSED == gateDriver.pos)
                 {
                     // open one gate
@@ -594,7 +601,7 @@ void gateCurrentControl(struct gate* gatePtr)
 uint8_t currentThresholdCalculate(uint8_t current, uint8_t pwm)
 {
     uint16_t tmp = current;
-    tmp = tmp*pwm/200 + current/2;
+    tmp = tmp * pwm / 200 + current / 2;
     return (uint8_t)
 }
 
@@ -621,7 +628,7 @@ bool overcurrentDetected(struct gate* gatePtr)
             currThreshold = overloadTab[i][0];
             currThreshold = currentThresholdCalculate(currThreshold, gatePtr->pwm)
 
-            mVal = overloadTab[i][1];
+                mVal = overloadTab[i][1];
             nVal = overloadTab[i][2];
 
             for(uint8_t j = 0; j < nVal; j++)
