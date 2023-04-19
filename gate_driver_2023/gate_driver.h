@@ -56,7 +56,7 @@
 #define LOW_SPEED_PWM 60
 
 #define RUN_1_TIME (2 * 1000)
-#define RUN_TIME_MAX (28 * 1000)
+#define RUN_TIME_MAX (40 * 1000)
 #define SLOW_DOWN_TIME (19 * 1000)
 #define THREAD_PITCH (5)                  // 5mm skok gwintu
 #define MAX_DISTANCE (45 * THREAD_PITCH * 100)  // w obrotach
