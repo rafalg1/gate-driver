@@ -24,13 +24,13 @@ volatile uint16_t task_10ms = 10;
 //         {100, 18, 20},
 //         {95, 38, 40}};
 
-uint8_t overloadTab[OVERLOAD_TAB_ENTRIES][3] =
-    {
-        {50, 2, 3},
-        {35, 4, 5},
-        {30, 8, 10},
-        {28, 18, 20},
-        {25, 38, 40}};
+// uint8_t overloadTab[OVERLOAD_TAB_ENTRIES][3] =
+//     {
+//         {50, 2, 3},
+//         {35, 4, 5},
+//         {30, 8, 10},
+//         {28, 18, 20},
+//         {25, 38, 40}};
 
 uint8_t overloadTabInrush[OVERLOAD_TAB_ENTRIES][3] =
     {
@@ -40,13 +40,13 @@ uint8_t overloadTabInrush[OVERLOAD_TAB_ENTRIES][3] =
         {100, 3, 4},
         {90, 4, 6}};
 
-// uint8_t overloadTab[OVERLOAD_TAB_ENTRIES][3] =
-//     {
-//         {100, 2, 3},
-//         {60, 4, 5},
-//         {55, 8, 10},
-//         {50, 18, 20},
-//         {45, 38, 40}};
+uint8_t overloadTab[OVERLOAD_TAB_ENTRIES][3] =
+    {
+        {100, 1, 2},
+        {70, 2, 3},
+        {60, 3, 3},
+        {55, 3, 4},
+        {50, 4, 4}};
 
 void gateInit(struct gate* gatePtr)
 {
@@ -178,7 +178,7 @@ void loop()
         static int cntPrint = 0;
         // static int cntPrint = 1;
 
-#define PRINT_2_DATA
+// #define PRINT_2_DATA
 
         if(gateDriver.isRunning == true)
         {
@@ -188,7 +188,7 @@ void loop()
             Serial.print(" i2: ");
             Serial.print(gate2.current);
 #endif
-            Serial.print("w1: ");
+            Serial.print(" w1: ");
             Serial.print(gate1.pwm);
             Serial.print(" u: ");
             Serial.print(gateDriver.batteryVoltage);
@@ -614,7 +614,7 @@ uint8_t currentThresholdCalculate(uint8_t current, uint8_t pwm)
 {
     uint16_t tmp = current;
     tmp = tmp * pwm / 200 + current / 2;
-    return (uint8_t)tmp
+    return (uint8_t)tmp;
 }
 
 bool overcurrentDetected(struct gate* gatePtr)
