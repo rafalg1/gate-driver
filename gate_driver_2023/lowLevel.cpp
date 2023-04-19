@@ -226,12 +226,12 @@ void setRelay(struct gate *gatePtr, uint8_t level)
     if(&gate1 == gatePtr)
     {
         if(HIGH == level) REL_1_ON, gate1.relayState = DIR_CLOSE;
-        else REL_1_OFF, gate1.relayState = DIR_CLOSE;
+        else REL_1_OFF, gate1.relayState = DIR_OPEN;
     }
     else if(&gate2 == gatePtr)
     {
         if(HIGH == level) REL_2_ON, gate2.relayState = DIR_CLOSE;
-        else REL_2_OFF, gate2.relayState = DIR_CLOSE;
+        else REL_2_OFF, gate2.relayState = DIR_OPEN;
     }
 }
 

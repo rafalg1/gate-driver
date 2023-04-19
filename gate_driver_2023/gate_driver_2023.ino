@@ -178,7 +178,7 @@ void loop()
         static int cntPrint = 0;
         // static int cntPrint = 1;
 
-// #define PRINT_2_DATA
+        // #define PRINT_2_DATA
 
         if(gateDriver.isRunning == true)
         {
@@ -248,6 +248,10 @@ void handleCommand(COMMAND_T cmd)
         gateDriver.canAcceptCommand = false;
         if(COMMAND_BOTH == cmd) gateDriver.cmd = COMMAND_BOTH;
         if(COMMAND_ONE == cmd) gateDriver.cmd = COMMAND_ONE;
+    }
+    else
+    {
+        Serial.println("Cant Accept Command");
     }
 }
 
@@ -362,9 +366,14 @@ void driverLogic(void)
                     gate1.dir = DIR_CLOSE;
                     Serial.println("Driver: start closing one");
                 }
+                else
+                {
+                    Serial.println("unhandled case");
+                }
             }
             else if(DRIVER_RUN_MODE_ONE == gateDriver.runMode)
             {
+                Serial.println("stop in run mode one");
                 stopGate(&gate1, STOP_TYPE_CMD);
             }
         }
@@ -453,6 +462,7 @@ void gateLogic(struct gate* gatePtr)
         gatePtr->isRunning = true;
         setPwm(gatePtr, 0);
         if(DIR_CLOSE == gatePtr->dir) setRelay(gatePtr, HIGH);
+        else setRelay(gatePtr, LOW);
         // gatePtr->cnt = 4;
         gatePtr->state = DELAY_FOR_RELAY;
         // Serial.println("INIT");
