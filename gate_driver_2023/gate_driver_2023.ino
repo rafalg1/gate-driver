@@ -408,7 +408,7 @@ void driverLogic(void)
     // TODO
     if(false == gateDriver.canAcceptCommand)
     {
-        gateDriver.timeCommand += 10;
+        gateDriver.timeCommand +=50; //to do
         if(gateDriver.timeCommand > 2000)
         {
             gateDriver.timeCommand = 0;
