@@ -407,7 +407,7 @@ void driverLogic(void)
 
     if(false == gateDriver.canAcceptCommand)
     {
-        gateDriver.timeCommand += DrIVER_LOGIC_TASK_PERIOD;
+        gateDriver.timeCommand += DRIVER_LOGIC_TASK_PERIOD;
         if(gateDriver.timeCommand > 2000)
         {
             gateDriver.timeCommand = 0;
