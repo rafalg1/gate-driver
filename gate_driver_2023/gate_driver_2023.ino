@@ -405,10 +405,9 @@ void driverLogic(void)
         gateDriver.state = DRIVER_STATE_IDLE;
     }
 
-    // TODO
     if(false == gateDriver.canAcceptCommand)
     {
-        gateDriver.timeCommand += 10;
+        gateDriver.timeCommand += DrIVER_LOGIC_TASK_PERIOD;
         if(gateDriver.timeCommand > 2000)
         {
             gateDriver.timeCommand = 0;

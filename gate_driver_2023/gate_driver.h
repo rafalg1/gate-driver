@@ -86,6 +86,7 @@
 
 
 #define GATE_LOGIC_TASK_PERIOD (50)
+#define DrIVER_LOGIC_TASK_PERIOD (50)
 
 
 
