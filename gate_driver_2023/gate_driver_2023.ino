@@ -181,7 +181,7 @@ void loop()
         driverLogic();
 
         gateLogic(&gate1);
-        // gateLogic(&gate2);
+        gateLogic(&gate2);
 
         static int cntPrint = 0;
         // static int cntPrint = 1;
@@ -566,6 +566,7 @@ void gateLogic(struct gate* gatePtr)
     else if(END == gatePtr->state)
     {
         gatePtr->isRunning = false;
+        setRelay(gatePtr, LOW);
 
         if(DIR_CLOSE == gatePtr->dir)
         {
