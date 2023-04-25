@@ -380,6 +380,7 @@ void driverLogic(void)
             }
             else if(DRIVER_RUN_MODE_ONE == gateDriver.runMode)
             {
+                runSummaryPrint();
                 Serial.println("stop in run mode one");
                 stopGate(&gate1, STOP_TYPE_CMD);
             }
