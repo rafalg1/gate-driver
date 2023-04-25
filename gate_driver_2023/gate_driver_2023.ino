@@ -40,13 +40,21 @@ uint8_t overloadTabInrush[OVERLOAD_TAB_ENTRIES][3] =
         {100, 3, 4},
         {90, 4, 6}};
 
+// uint8_t overloadTab[OVERLOAD_TAB_ENTRIES][3] =
+//     {
+//         {100, 1, 2},
+//         {70, 2, 3},
+//         {60, 3, 3},
+//         {55, 3, 4},
+//         {50, 4, 4}};
+
 uint8_t overloadTab[OVERLOAD_TAB_ENTRIES][3] =
     {
-        {100, 1, 2},
-        {70, 2, 3},
-        {60, 3, 3},
-        {55, 3, 4},
-        {50, 4, 4}};
+        {35, 1, 2},
+        {30, 2, 3},
+        {25, 3, 3},
+        {23, 3, 4},
+        {20, 4, 4}};
 
 void gateInit(struct gate* gatePtr)
 {
@@ -152,7 +160,7 @@ void loop()
         task_10ms = 10;
         KEY_T key = getKey();
 
-        if(KEY_BOTH == key) handleCommand(COMMAND_ONE);
+        if(KEY_BOTH == key) handleCommand(COMMAND_BOTH);
         else if(KEY_ONE == key) handleCommand(COMMAND_ONE);
 
         // setPwm(PWM_GATE_1, gate1.pwm);
@@ -216,22 +224,6 @@ void loop()
 
     if(!task_200ms)
     {
-        // Serial.print(" p1: ");
-        // Serial.print(getPositionInRev(gate1.position));
-        // Serial.print(" p2: ");
-        // Serial.print(getPositionInRev(gate2.position));
-        // Serial.print(" u: ");
-        // Serial.println(gateDriver.batteryVoltage);
-
-        // static uint16_t curr = 0;
-        // Serial.print("i: ");
-        // Serial.print(curr);
-        // Serial.print("  speed: ");
-        // Serial.println(getMap2d(curr));
-        // curr ++;
-
-        // if(curr == 70) curr = 0;
-
         task_200ms = 200;
         wdt_reset();
     }
@@ -241,13 +233,19 @@ void loop()
     }
 }
 
+void handleError(ERROR_T type)
+{
+    Serial.println("Error");
+}
+
 void handleCommand(COMMAND_T cmd)
 {
     if(true == gateDriver.canAcceptCommand)
     {
         gateDriver.canAcceptCommand = false;
         if(COMMAND_BOTH == cmd) gateDriver.cmd = COMMAND_BOTH;
-        if(COMMAND_ONE == cmd) gateDriver.cmd = COMMAND_ONE;
+        else if(COMMAND_ONE == cmd) gateDriver.cmd = COMMAND_ONE;
+        else handleError(ERROR_NOT_HANDLED_CASE);
     }
     else
     {
@@ -275,13 +273,13 @@ void stopGate(struct gate* gatePtr, STOP_TYPE_T stopType)
     }
 }
 
-void stopFromCmd(void)
-{
-    stopGate(&gate1, STOP_TYPE_CMD);
-    stopGate(&gate2, STOP_TYPE_CMD);
-}
+// void stopFromCmd(void)
+// {
+//     stopGate(&gate1, STOP_TYPE_CMD);
+//     stopGate(&gate2, STOP_TYPE_CMD);
+// }
 
-void stopDriverFromTimeout(void) { gateDriver.isRunning = false; }
+// void stopDriverFromTimeout(void) { gateDriver.isRunning = false; }
 
 void prepareDriverForRun(void)
 {
@@ -301,40 +299,49 @@ void driverLogic(void)
     {
         if(COMMAND_BOTH == gateDriver.cmd)
         {
-            // //jeśli jest iddle
-            // if(DRIVER_STATE_IDLE == gateDriver.state)
-            // {
-            //   if(DRIVER_POS_BOTH_CLOSED == gateDriver.pos)
-            //   {
-            //     prepareDriverForRun();
-            //     gateDriver.runMode = DRIVER_RUN_MODE_BOTH;
-            //     gateDriver.isRunningG1 = true;
-            //     gateDriver.isRunningG2 = true;
-            //     Serial.println("Driver: start opening both");
-            //     gateDriver.dir = DRIVER_DIR_OPENING;
-            //     gateDriver.pos = DRIVER_POS_BOTH_OPEN;
-            //     gate1.state = INIT;
-            //     gate1.dir = DIR_OPEN;
-            //   }
-            //   else if(DRIVER_POS_BOTH_OPEN == gateDriver.pos)
-            //   {
-            //     prepareDriverForRun();
-            //     gateDriver.runMode = DRIVER_RUN_MODE_BOTH;
-            //     gateDriver.isRunningG1 = true;
-            //     gateDriver.isRunningG2 = true;
-            //     Serial.println("Driver: start closing both");
-            //     gateDriver.dir = DRIVER_DIR_CLOSING;
-            //     gateDriver.pos = DRIVER_POS_BOTH_CLOSED;
-            //     gate2.state = INIT;
-            //     gate2.dir = DIR_CLOSE;
-            //   }
-            //   gateDriver.state = DRIVER_STATE_RUN;
-
-            // }
-            // else if(DRIVER_RUN_MODE_BOTH == gateDriver.runMode)
-            // {
-            //   stopFromCmd();
-            // }
+            // jeśli jest iddle
+            if(DRIVER_STATE_IDLE == gateDriver.state)
+            {
+                if(DRIVER_POS_BOTH_CLOSED == gateDriver.pos)
+                {
+                    prepareDriverForRun();
+                    gateDriver.runMode = DRIVER_RUN_MODE_BOTH;
+                    gateDriver.isRunningG1 = true;
+                    gateDriver.isRunningG2 = true;
+                    Serial.println("Driver: start opening both");
+                    gateDriver.dir = DRIVER_DIR_OPENING;
+                    gateDriver.pos = DRIVER_POS_BOTH_OPEN;
+                    gate1.state = INIT;
+                    gate1.dir = DIR_OPEN;
+                }
+                else if(DRIVER_POS_BOTH_OPEN == gateDriver.pos)
+                {
+                    prepareDriverForRun();
+                    gateDriver.runMode = DRIVER_RUN_MODE_BOTH;
+                    gateDriver.isRunningG1 = true;
+                    gateDriver.isRunningG2 = true;
+                    Serial.println("Driver: start closing both");
+                    gateDriver.dir = DRIVER_DIR_CLOSING;
+                    gateDriver.pos = DRIVER_POS_BOTH_CLOSED;
+                    gate2.state = INIT;
+                    gate2.dir = DIR_CLOSE;
+                }
+                else
+                {
+                    handleError(ERROR_NOT_HANDLED_CASE);
+                }
+                gateDriver.state = DRIVER_STATE_RUN;
+            }
+            else if(DRIVER_RUN_MODE_BOTH == gateDriver.runMode)
+            {
+                // stopFromCmd();
+                stopGate(&gate1, STOP_TYPE_CMD);
+                stopGate(&gate2, STOP_TYPE_CMD);
+            }
+            else
+            {
+                handleError(ERROR_NOT_HANDLED_CASE);
+            }
         }
         else if(COMMAND_ONE == gateDriver.cmd)
         {
@@ -368,13 +375,17 @@ void driverLogic(void)
                 }
                 else
                 {
-                    Serial.println("unhandled case");
+                    handleError(ERROR_NOT_HANDLED_CASE);
                 }
             }
             else if(DRIVER_RUN_MODE_ONE == gateDriver.runMode)
             {
                 Serial.println("stop in run mode one");
                 stopGate(&gate1, STOP_TYPE_CMD);
+            }
+            else
+            {
+                handleError(ERROR_NOT_HANDLED_CASE);
             }
         }
 
@@ -408,7 +419,7 @@ void driverLogic(void)
     if(false == gateDriver.canAcceptCommand)
     {
         gateDriver.timeCommand += DRIVER_LOGIC_TASK_PERIOD;
-        if(gateDriver.timeCommand > 2000)
+        if(gateDriver.timeCommand > ACCEPT_COMMAND_TIME)
         {
             gateDriver.timeCommand = 0;
             gateDriver.canAcceptCommand = true;
@@ -417,7 +428,7 @@ void driverLogic(void)
 
     if(true == gateDriver.isRunning)
     {
-        gateDriver.runTime += 10;
+        gateDriver.runTime += DRIVER_LOGIC_TASK_PERIOD;
 
         if((false == gateDriver.isRunningG1) &&
            (false == gateDriver.isRunningG2))
@@ -468,7 +479,7 @@ void gateLogic(struct gate* gatePtr)
     }
     else if(DELAY_FOR_RELAY == gatePtr->state)
     {
-        setPwm(gatePtr, 100);
+        setPwm(gatePtr, INIT_PWM);
         gatePtr->state = RUN_2;
     }
     // else if(INRUSH_1 == gatePtr->state)
@@ -531,15 +542,15 @@ void gateLogic(struct gate* gatePtr)
         if(DIR_OPEN == gatePtr->dir) setRelay(gatePtr, HIGH);
         else setRelay(gatePtr, LOW);
         gatePtr->state = DELAY_FOR_RELAY_3;
-        gatePtr->cnt = 20;
+        gatePtr->cnt = BREAK_BEFORE_KICKBACK;
     }
     else if(DELAY_FOR_RELAY_3 == gatePtr->state)
     {
         if(0 < gatePtr->cnt) gatePtr->cnt--;
         else
         {
-            setPwm(gatePtr, 100);
-            gatePtr->cnt = 6;
+            setPwm(gatePtr, MAX_PWM);
+            gatePtr->cnt = KICKBACK_TIME;
             gatePtr->state = BACK_MOTOR;
         }
     }
@@ -575,7 +586,7 @@ void gateLogic(struct gate* gatePtr)
     if(true == gatePtr->isRunning)
     {
         gatePtr->runTime += GATE_LOGIC_TASK_PERIOD;
-        if(gatePtr->runTime > 460) gatePtr->currentMonitorEnableInrush = true;
+        if(gatePtr->runTime > INRUSH_DISABLE_MONITOR_TIME) gatePtr->currentMonitorEnableInrush = true;
 
         if(STOP_TYPE_NONE == gatePtr->stopType)
         {
@@ -604,7 +615,6 @@ void gateCurrentControl(struct gate* gatePtr)
 
         if(true == overcurrentDetected(gatePtr))
         {
-            // nie działa
             setPwm(gatePtr, 0);
             gateDriver.canAcceptCommand = false;
             gatePtr->currentMonitorEnableOvercurrent = false;

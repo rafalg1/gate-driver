@@ -50,25 +50,30 @@
 #define PWM_GATE_2 10
 
 #define MAX_PWM 100
-#define INIT_PWM 35
+#define INIT_PWM 100
+#define LOW_SPEED_PWM 45
 #define LEVEL_1_PWM 60
 #define LEVEL_2_PWM 100
-#define LOW_SPEED_PWM 45
 
-#define RUN_1_TIME (2 * 1000)
+#define INRUSH_DISABLE_MONITOR_TIME (460)
+#define ACCEPT_COMMAND_TIME (2000)
+#define BREAK_BEFORE_KICKBACK (1000 / GATE_LOGIC_TASK_PERIOD)
+#define KICKBACK_TIME (250 / GATE_LOGIC_TASK_PERIOD)
+
+// #define RUN_1_TIME (2 * 1000)
 #define RUN_TIME_MAX (40 * 1000)
-#define SLOW_DOWN_TIME (19 * 1000)
+// #define SLOW_DOWN_TIME (19 * 1000)
 #define THREAD_PITCH (5)                  // 5mm skok gwintu
 #define MAX_DISTANCE (45 * THREAD_PITCH * 100)  // w obrotach
 
-#define AVG_RUN_TIME (26 * 1000)
+// #define AVG_RUN_TIME (26 * 1000)
 
 #define OVERLOAD_TAB_ENTRIES (5)
+#define CURRENT_BUFF_SIZE 40   // 50ms*40 = 2s
 
 // 8 próbek z 10
-#define CURRENT_THRESHOLD 140  // 12.0A
-#define CURRENT_BUFF_SIZE 40   // 50ms*40 = 2s
-#define OVERCURRENT_NUM 2
+// #define CURRENT_THRESHOLD 140  // 12.0A
+// #define OVERCURRENT_NUM 2
 
 // pozycja wyrażona w liczbie obrotów
 #define POSITION_MAX (175 * 100)
@@ -84,11 +89,8 @@
 
 #define getPositionInRev(x) ((x) / 100)
 
-
 #define GATE_LOGIC_TASK_PERIOD (50)
-#define DrIVER_LOGIC_TASK_PERIOD (50)
-
-
+#define DRIVER_LOGIC_TASK_PERIOD (50)
 
 
 typedef enum
@@ -113,6 +115,12 @@ typedef enum
     COMMAND_ONE,
     COMMAND_NONE
 } COMMAND_T;
+
+typedef enum
+{
+    ERROR_NOT_HANDLED_CASE,
+    ERROR_NUMBER
+} ERROR_T;
 
 typedef enum
 {
