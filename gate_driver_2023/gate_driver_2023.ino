@@ -31,14 +31,31 @@ volatile uint16_t task_10ms = 10;
 //         {30, 8, 10},
 //         {28, 18, 20},
 //         {25, 38, 40}};
-
-uint8_t overloadTabInrush[OVERLOAD_TAB_ENTRIES][3] =
+#if defined(TEST_MODE)
+uint8_t overloadTab[OVERLOAD_TAB_ENTRIES][3] =
     {
-        {140, 2, 3},
-        {130, 3, 4},
-        {120, 3, 4},
-        {100, 3, 4},
-        {90, 4, 6}};
+        {35, 1, 2},
+        {30, 2, 3},
+        {25, 3, 3},
+        {15, 3, 4},
+        {10, 4, 4}};
+#else
+uint8_t overloadTab[OVERLOAD_TAB_ENTRIES][3] =
+    {
+        {100, 1, 2},
+        {70, 2, 3},
+        {60, 3, 3},
+        {55, 3, 4},
+        {50, 4, 4}};
+#endif
+
+// uint8_t overloadTabInrush[OVERLOAD_TAB_ENTRIES][3] =
+//     {
+//         {140, 2, 3},
+//         {130, 3, 4},
+//         {120, 3, 4},
+//         {100, 3, 4},
+//         {90, 4, 6}};
 
 // uint8_t overloadTab[OVERLOAD_TAB_ENTRIES][3] =
 //     {
@@ -48,13 +65,13 @@ uint8_t overloadTabInrush[OVERLOAD_TAB_ENTRIES][3] =
 //         {55, 3, 4},
 //         {50, 4, 4}};
 
-uint8_t overloadTab[OVERLOAD_TAB_ENTRIES][3] =
-    {
-        {35, 1, 2},
-        {30, 2, 3},
-        {25, 3, 3},
-        {15, 3, 4},
-        {10, 4, 4}};
+// uint8_t overloadTab[OVERLOAD_TAB_ENTRIES][3] =
+//     {
+//         {35, 1, 2},
+//         {30, 2, 3},
+//         {25, 3, 3},
+//         {15, 3, 4},
+//         {10, 4, 4}};
 
 void gateInit(struct gate* gatePtr)
 {
@@ -488,14 +505,17 @@ void gateLogic(struct gate* gatePtr)
         setPwm(gatePtr, 0);
         if(DIR_CLOSE == gatePtr->dir) setRelay(gatePtr, HIGH);
         else setRelay(gatePtr, LOW);
-        // gatePtr->cnt = 4;
+        gatePtr->cnt = RELAY_TRANSISTOR_DELAY;
         gatePtr->state = DELAY_FOR_RELAY;
-        // Serial.println("INIT");
     }
     else if(DELAY_FOR_RELAY == gatePtr->state)
     {
-        setPwm(gatePtr, INIT_PWM);
-        gatePtr->state = RUN_2;
+        if(0 < gatePtr->cnt) gatePtr->cnt--;
+        else
+        {
+            setPwm(gatePtr, INIT_PWM);
+            gatePtr->state = RUN_2;
+        }
     }
     // else if(INRUSH_1 == gatePtr->state)
     // {
@@ -550,14 +570,20 @@ void gateLogic(struct gate* gatePtr)
     else if(OVERCURRENT_DETECTED == gatePtr->state)
     {
         gateDriver.canAcceptCommand = false;
+        gatePtr->cnt = RELAY_TRANSISTOR_DELAY;
         gatePtr->state = DELAY_FOR_RELAY_2;
     }
     else if(DELAY_FOR_RELAY_2 == gatePtr->state)
     {
-        if(DIR_OPEN == gatePtr->dir) setRelay(gatePtr, HIGH);
-        else setRelay(gatePtr, LOW);
-        gatePtr->state = DELAY_FOR_RELAY_3;
-        gatePtr->cnt = BREAK_BEFORE_KICKBACK;
+        if(0 < gatePtr->cnt) gatePtr->cnt--;
+        else
+        {
+            if(DIR_OPEN == gatePtr->dir) setRelay(gatePtr, HIGH);
+            else setRelay(gatePtr, LOW);
+
+            gatePtr->cnt = BREAK_BEFORE_KICKBACK;
+            gatePtr->state = DELAY_FOR_RELAY_3;
+        }
     }
     else if(DELAY_FOR_RELAY_3 == gatePtr->state)
     {
@@ -575,28 +601,33 @@ void gateLogic(struct gate* gatePtr)
         else
         {
             setPwm(gatePtr, 0);
+            gatePtr->cnt = RELAY_TRANSISTOR_DELAY;
             gatePtr->state = END;
         }
     }
     else if(END == gatePtr->state)
     {
-        gatePtr->isRunning = false;
-        setRelay(gatePtr, LOW);
-
-        if(DIR_CLOSE == gatePtr->dir)
+        if(0 < gatePtr->cnt) gatePtr->cnt--;
+        else
         {
-            gatePtr->pos = POS_CLOSED;
-        }
-        if(DIR_OPEN == gatePtr->dir)
-        {
-            gatePtr->pos = POS_OPEN;
-        }
+            gatePtr->isRunning = false;
+            setRelay(gatePtr, LOW);
 
-        if(&gate1 == gatePtr) gateDriver.isRunningG1 = false;
-        if(&gate2 == gatePtr) gateDriver.isRunningG2 = false;
+            if(DIR_CLOSE == gatePtr->dir)
+            {
+                gatePtr->pos = POS_CLOSED;
+            }
+            if(DIR_OPEN == gatePtr->dir)
+            {
+                gatePtr->pos = POS_OPEN;
+            }
 
-        gatePtr->lastRunTime = gatePtr->runTime;
-        gatePtr->state = STOP;
+            if(&gate1 == gatePtr) gateDriver.isRunningG1 = false;
+            if(&gate2 == gatePtr) gateDriver.isRunningG2 = false;
+
+            gatePtr->lastRunTime = gatePtr->runTime;
+            gatePtr->state = STOP;
+        }
     }
 
     if(true == gatePtr->isRunning)
