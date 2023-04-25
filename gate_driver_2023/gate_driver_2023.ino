@@ -64,6 +64,7 @@ void gateInit(struct gate* gatePtr)
     gatePtr->currentMonitorEnableOvercurrent = true;
     gatePtr->currentMonitorEnableInrush = false;
     gatePtr->stopType = STOP_TYPE_NONE;
+    gatePtr->pos = POS_CLOSED;
     gatePtr->distance = 0;
     gatePtr->pwm = 0;
     gatePtr->state = STOP;
