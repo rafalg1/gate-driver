@@ -53,8 +53,8 @@ uint8_t overloadTab[OVERLOAD_TAB_ENTRIES][3] =
         {35, 1, 2},
         {30, 2, 3},
         {25, 3, 3},
-        {23, 3, 4},
-        {20, 4, 4}};
+        {15, 3, 4},
+        {10, 4, 4}};
 
 void gateInit(struct gate* gatePtr)
 {
@@ -376,6 +376,7 @@ void driverLogic(void)
                 else
                 {
                     handleError(ERROR_NOT_HANDLED_CASE);
+                    Serial.println("Cant move one side in position BOTH OPEN");
                 }
             }
             else if(DRIVER_RUN_MODE_ONE == gateDriver.runMode)
