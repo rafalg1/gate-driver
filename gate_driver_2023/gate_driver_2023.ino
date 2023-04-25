@@ -61,6 +61,7 @@ void gateInit(struct gate* gatePtr)
     setPwm(gatePtr, 0);
 
     gatePtr->isRunning = false;
+    gatePtr->overcurrentDetected = false;
     gatePtr->currentMonitorEnableOvercurrent = true;
     gatePtr->currentMonitorEnableInrush = false;
     gatePtr->stopType = STOP_TYPE_NONE;
@@ -255,21 +256,32 @@ void handleCommand(COMMAND_T cmd)
 
 void stopGate(struct gate* gatePtr, STOP_TYPE_T stopType)
 {
-    setPwm(gatePtr, 0);
-    if(STOP_TYPE_TIME == stopType)
+    if(false == gatePtr->overcurrentDetected)
     {
+        setPwm(gatePtr, 0);
+        printGateName(gatePtr);
         gatePtr->state = END;
-        Serial.println("stop reason - run time");
+
+        if(STOP_TYPE_TIME == stopType)
+        {
+            Serial.println(" stop reason -> run time");
+        }
+        else if(STOP_TYPE_MAX_DISTANCE == stopType)
+        {
+            Serial.println("stop reason -> distance");
+        }
+        else if(STOP_TYPE_CMD == stopType)
+        {
+            Serial.println("stop reason -> cmd");
+        }
+        else
+        {
+            Serial.println("stop reason -> unknown");
+        }
     }
-    else if(STOP_TYPE_MAX_DISTANCE == stopType)
+    else
     {
-        gatePtr->state = END;
-        Serial.println("stop reason - distance");
-    }
-    else if(STOP_TYPE_CMD == stopType)
-    {
-        gatePtr->state = END;
-        Serial.println("stop reason - cmd");
+        Serial.println("overcurrent already detected");
     }
 }
 
@@ -619,8 +631,9 @@ void gateCurrentControl(struct gate* gatePtr)
         if(true == overcurrentDetected(gatePtr))
         {
             setPwm(gatePtr, 0);
-            gateDriver.canAcceptCommand = false;
+            // gateDriver.canAcceptCommand = false;
             gatePtr->currentMonitorEnableOvercurrent = false;
+            gatePtr->overcurrentDetected = true;
             // gatePtr->isRunning = false;
             gatePtr->state = OVERCURRENT_DETECTED;
             if(gatePtr == &gate1) Serial.println("gate1: overcurrent");

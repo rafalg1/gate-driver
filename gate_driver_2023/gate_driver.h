@@ -224,8 +224,8 @@ struct gate
     bool currentMonitorEnableInrush;
     bool fastRideAllowed;
 
-    bool overcurrentFlag;
-    bool currentControll;
+    bool overcurrentDetected;
+    // bool currentControll;
     STOP_TYPE_T stopType;
     GATE_STATE_T state;
     GATE_DIR_T dir;

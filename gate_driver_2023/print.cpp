@@ -32,6 +32,12 @@ void gateDataPrint(struct gate* gatePtr)
     Serial.println("************************************");
 }
 
+void printGateName(struct gate* gatePtr)
+{
+    if(gatePtr == &gate1) Serial.print("Gate1:");
+    if(gatePtr == &gate2) Serial.print("Gate2:");
+}
+
 void driverDataPrint(void)
 {
     Serial.print("runtime: ");
