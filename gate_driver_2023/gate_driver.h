@@ -56,6 +56,7 @@
 #define LEVEL_2_PWM 100
 
 #define INRUSH_DISABLE_MONITOR_TIME (460)
+#define START_SECOND_GATE_TIME (3000)
 #define ACCEPT_COMMAND_TIME (2000)
 #define BREAK_BEFORE_KICKBACK (1000 / GATE_LOGIC_TASK_PERIOD)
 #define KICKBACK_TIME (250 / GATE_LOGIC_TASK_PERIOD)
@@ -64,7 +65,7 @@
 #define RUN_TIME_MAX (40 * 1000)
 // #define SLOW_DOWN_TIME (19 * 1000)
 #define THREAD_PITCH (5)                  // 5mm skok gwintu
-#define MAX_DISTANCE (20 * THREAD_PITCH * 100)  // w obrotach
+#define MAX_DISTANCE (45 * THREAD_PITCH * 100)  // 45cm na liczbe obrotów
 
 // #define AVG_RUN_TIME (26 * 1000)
 
@@ -89,8 +90,8 @@
 
 #define getPositionInRev(x) ((x) / 100)
 
-#define GATE_LOGIC_TASK_PERIOD (50)
-#define DRIVER_LOGIC_TASK_PERIOD (50)
+#define GATE_LOGIC_TASK_PERIOD (20)
+#define DRIVER_LOGIC_TASK_PERIOD (20)
 
 
 typedef enum

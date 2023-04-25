@@ -123,7 +123,7 @@ void checkPositionBeforeStart(void)
 
 void setPwm(int gatePtr, uint8_t val)
 {
-    uint8_t sol = val / 2;
+    uint8_t sol = val / 5;
 
     cli();
 
@@ -155,7 +155,7 @@ ISR(TIMER2_COMPA_vect)
     if(task_10ms > 0) task_10ms--;
 
     pwmCnt++;
-    if(pwmCnt >= 50)
+    if(pwmCnt >= 20)
     {
         pwmCnt = 0;
 

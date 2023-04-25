@@ -103,7 +103,7 @@ void setup()
 
     gateDriver.state = DRIVER_STATE_IDLE;
     gateDriver.pos = DRIVER_POS_BOTH_CLOSED;
-    gateDriver.timeToStartGate2 = 3000;
+    gateDriver.timeToStartGate2 = START_SECOND_GATE_TIME;
     gateDriver.cmd = COMMAND_NONE;
     gateDriver.canAcceptCommand = true;
 
